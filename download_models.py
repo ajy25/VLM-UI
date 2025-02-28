@@ -1,5 +1,5 @@
-from models.xraygpt import download_xraygpt
-from models.CheXagent import download_CheXagent
+from vlmui.models.xraygpt.download import download_xraygpt
+from vlmui.models.CheXagent.download import download_CheXagent
 
 
 def download_models(model_names: list[str]):
