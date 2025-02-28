@@ -3,7 +3,21 @@ import os
 import re
 import subprocess
 import sys
-from ..utils import run_command, ENV_NAME
+
+ENV_NAME = "vlm-ui"
+
+
+def run_command(
+    command: list[str],
+    shell: bool = False,
+):
+    """Runs a shell command and handles errors."""
+    try:
+        subprocess.run(command, shell=shell, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
 
 curr_dir = Path(__file__).parent.resolve()
 
