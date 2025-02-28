@@ -93,3 +93,7 @@ def download_xraygpt():
             str(curr_dir / "XrayGPT" / "xraygpt_requirements_fixed.txt"),
         ]
     )
+
+
+if __name__ == "__main__":
+    download_xraygpt()

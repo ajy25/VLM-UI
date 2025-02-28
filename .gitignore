@@ -4,4 +4,4 @@ __pycache__/
 vlmui/models/xraygpt/XrayGPT
 
 # test images
-test_images/*
+# test_images/*
