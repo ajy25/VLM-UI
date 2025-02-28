@@ -1,0 +1,7 @@
+__pycache__/
+
+# xraygpt
+vlmui/models/xraygpt/XrayGPT
+
+# test images
+test_images/*

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLM X-ray App</title>
+    <!-- Enhanced Inline CSS Styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            width: 95vw;
+            height: 90vh;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: auto;
+            margin-top: 2vh;
+        }
+        .left-panel, .right-panel {
+            padding: 20px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .left-panel {
+            width: 40%;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+        }
+        .right-panel {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        select, input[type="file"], input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            padding: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #chat-window {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: #f9f9f9;
+            flex-grow: 1;
+            overflow-y: auto;
+            height: 70%;
+        }
+        .message-person {
+            text-align: right;
+            color: blue;
+        }
+        .message-model {
+            text-align: left;
+            color: green;
+        }
+        #uploaded-image {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h2>Upload X-ray Image</h2>
+            <input type="file" id="file-upload">
+            <button onclick="uploadFile()">Upload</button>
+            <h3>Selected Model: <span id="current-model">None</span></h3>
+            <h3>Select Model</h3>
+            <select id="model-select">
+                {% for model in models %}
+                    <option value="{{ model }}">{{ model }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="setModel()">Set Model</button>
+            <h3>Uploaded Image</h3>
+            <img id="uploaded-image" src="" alt="No Image Uploaded">
+        </div>
+        <div class="right-panel">
+            <h2>LLM Chat</h2>
+            <div id="chat-window"></div>
+            <input type="text" id="chat-input" placeholder="Ask a question...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Inline JavaScript -->
+    <script>
+        function uploadFile() {
+            var fileInput = document.getElementById('file-upload');
+            var file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    // Display the uploaded image
+                    document.getElementById('uploaded-image').src = `/uploads/${file.name}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function setModel() {
+            var modelSelect = document.getElementById('model-select');
+            var selectedModel = modelSelect.value;
+
+            var formData = new FormData();
+            formData.append('model', selectedModel);
+
+            fetch('/set_model', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.current_model) {
+                    document.getElementById('current-model').textContent = data.current_model;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function sendMessage() {
+            var chatInput = document.getElementById('chat-input');
+            var message = chatInput.value.trim();
+            if (message === '') {
+                alert('Please enter a message.');
+                return;
+            }
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    chatInput.value = '';
+                    var chatWindow = document.getElementById('chat-window');
+                    chatWindow.innerHTML = '';
+                    data.history.forEach(chat => {
+                        var messageDiv = document.createElement('div');
+                        messageDiv.textContent = chat.message;
+                        if (chat.sender === 'person') {
+                            messageDiv.classList.add('message-person');
+                        } else {
+                            messageDiv.classList.add('message-model');
+                        }
+                        chatWindow.appendChild(messageDiv);
+                    });
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
