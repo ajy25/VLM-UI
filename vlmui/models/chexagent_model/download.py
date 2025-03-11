@@ -3,8 +3,6 @@ import os
 import subprocess
 import sys
 
-ENV_NAME = "vlm-ui"
-
 
 def run_command(
     command: list[str],
@@ -23,7 +21,7 @@ curr_dir = Path(__file__).parent.resolve()
 
 def download_CheXagent():
     os.chdir(curr_dir)
-    run_command(["pip", "install", "-r", str(curr_dir / "requirements.txt")])
+    run_command(["pip", "install", "-r", str(curr_dir / "chexagent-requirements.txt")])
 
 
 if __name__ == "__main__":

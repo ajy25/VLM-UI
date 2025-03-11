@@ -1,0 +1,7 @@
+omegaconf==2.3.0
+timm==1.0.15
+webdataset==0.2.111
+scikit-image==0.25.2
+pandas==2.2.3
+iopath==0.1.10
+decord==0.6.0

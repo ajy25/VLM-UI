@@ -2,7 +2,7 @@ from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import Literal
-from ..base_model import VLM_Inference_Base, mute_output
+from ..base_model import VLM_Inference_Base
 
 
 class CheXagent_Inference(VLM_Inference_Base):
@@ -13,8 +13,8 @@ class CheXagent_Inference(VLM_Inference_Base):
         device: Literal["cpu", "cuda", "mps"] = "cpu",
         huggingface_model_name: str = "StanfordAIMI/CheXagent-2-3b",
         dtype: torch.dtype = torch.float32,
-        device_map: Literal[None, "auto"] = None,
-        low_cpu_mem_usage: bool = False,
+        device_map: Literal[None, "auto"] = "auto",
+        low_cpu_mem_usage: bool = True,
     ):
         """Initialize the CheXagent model inference class.
 
@@ -30,10 +30,10 @@ class CheXagent_Inference(VLM_Inference_Base):
             The data type to run the model on, by default torch.float32.
 
         device_map : Literal[None, "auto"], optional
-            The device map to use for model loading, by default None.
+            The device map to use for model loading, by default "auto".
 
         low_cpu_mem_usage : bool, optional
-            Whether to use low CPU memory usage, by default False.
+            Whether to use low CPU memory usage, by default True.
         """
         super().__init__(
             model_name="CheXagent",
@@ -41,6 +41,8 @@ class CheXagent_Inference(VLM_Inference_Base):
                 "device": device,
                 "huggingface_model_name": huggingface_model_name,
                 "dtype": dtype,
+                "device_map": device_map,
+                "low_cpu_mem_usage": low_cpu_mem_usage,
             },
         )
         self._dtype = dtype
@@ -76,10 +78,11 @@ class CheXagent_Inference(VLM_Inference_Base):
             query = self._tokenizer.from_list_format([{"text": prompt}])
         if len(self._formatted_chat_history) > 0:
             conv = [*self._formatted_chat_history, {"from": "human", "value": query}]
-        conv = [
-            {"from": "system", "value": "You are a helpful assistant."},
-            {"from": "human", "value": query},
-        ]
+        else:
+            conv = [
+                {"from": "system", "value": "You are a helpful assistant."},
+                {"from": "human", "value": query},
+            ]
         input_ids = self._tokenizer.apply_chat_template(
             conv, add_generation_prompt=True, return_tensors="pt"
         )
@@ -99,3 +102,10 @@ class CheXagent_Inference(VLM_Inference_Base):
         self._chat_history.append(("ai", response))
 
         return response
+
+    def load_image(self, image_path: Path):
+        """Load image from given path"""
+        super().load_image(image_path)
+
+        # reset chat history
+        self._formatted_chat_history = []

@@ -13,7 +13,7 @@ vlmui_app.config["SECRET_KEY"] = "supersecretkey"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 chat_history = []
-model_integrator = ModelIntegrator(device="cpu")
+model_integrator = ModelIntegrator(device="cuda")
 
 current_model = model_integrator.get_current_model_name()
 

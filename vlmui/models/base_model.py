@@ -47,6 +47,8 @@ class VLM_Inference_Base:
     def load_image(self, image_path: Path):
         """Load image from given path"""
         self._image_path = image_path
+        # reset chat history
+        self._chat_history = []
 
     def chat(self, prompt: str) -> str:
         """Chat with the model using given prompt"""

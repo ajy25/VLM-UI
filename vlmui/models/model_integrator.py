@@ -1,6 +1,6 @@
 from typing import Literal
 from pathlib import Path
-from .CheXagent import CheXagent_Inference
+from .chexagent_model import CheXagent_Inference
 
 
 class ModelIntegrator:

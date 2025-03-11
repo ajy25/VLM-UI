@@ -1,4 +1,4 @@
-from vlmui.models.CheXagent import CheXagent_Inference
+from vlmui.models.chexagent_model import CheXagent_Inference
 from pathlib import Path
 
 curr_dir = Path(__file__).parent.resolve()

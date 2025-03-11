@@ -1,7 +1,8 @@
 __pycache__/
 
 # xraygpt
-vlmui/models/xraygpt/XrayGPT
+vlmui/models/xraygpt_model/XrayGPT
 
-# test images
-# test_images/*
+# biomedgpt
+vlmui/models/biomedgpt_model/OFA
+vlmui/models/biomedgpt_model/BiomedGPT-Base-Pretrained
