@@ -1,6 +1,6 @@
 torch==2.5.0
 pillow==11.1.0
-transformers==4.40.0
+transformers==4.36.2
 matplotlib==3.10.0
 albumentations==2.0.4
 opencv-python==4.11.0.86
