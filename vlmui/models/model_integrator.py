@@ -1,12 +1,16 @@
 from typing import Literal
 from pathlib import Path
 from .chexagent_model import CheXagent_Inference
+from .biomedgpt_model import BiomedGPT_Inference
+from .cxrllava_model.model import CXR_LLaVA_Inference
 
 
 class ModelIntegrator:
     def __init__(self, device: Literal["cpu", "cuda"] = "cpu"):
         self._name_to_model = {
             "CheXagent": CheXagent_Inference(device=device),
+            "BiomedGPT": BiomedGPT_Inference(device=device),
+            "CXR-LLaVA": CXR_LLaVA_Inference(device=device),
         }
         self._current_model_name = sorted(self._name_to_model.keys())[0]
         self._current_model = self._name_to_model[self._current_model_name]

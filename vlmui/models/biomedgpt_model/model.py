@@ -1,4 +1,4 @@
-from transformers import OFATokenizer, OFAModel
+from transformers_old import OFATokenizer, OFAModel
 import re
 import torch
 from PIL import Image
